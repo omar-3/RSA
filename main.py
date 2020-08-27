@@ -42,13 +42,11 @@ def isPrime(n) :
         return True
     if (n % 2 == 0 or n % 3 == 0) : 
         return False
-  
     i = 5
     while(i * i <= n) : 
         if (n % i == 0 or n % (i + 2) == 0) : 
             return False
         i = i + 6
-  
     return True
 
 def generate_keys():
@@ -71,7 +69,28 @@ def generate_keys():
     return pub, priv
 
 pub, priv = generate_keys()
-print(pub.n)
-print(priv.n)
-print(pub.e)
-print(priv.d)
+
+reading = open("message.txt","r")
+message = reading.read()
+
+encrypted = open("encrypted.txt", "w")
+decrypted = open("decrypted.txt", "w")
+
+
+
+for char in message:
+    number = ord(char)
+    string = str(modExp(number, pub.e, pub.n)) + " "
+    encrypted.write(string)
+
+encrypted.close()
+
+tobeDecrypted = open("encrypted.txt", "r")
+
+
+tobeDecryptedList = [int(number) for number in (tobeDecrypted.read()).split(" ")[:-1]]
+
+
+for number in tobeDecryptedList:
+    decrypted.write(chr(modExp(number, priv.d, priv.n)))
+
