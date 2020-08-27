@@ -1,14 +1,14 @@
 import random
 
 class public_key:
-    def __init__(self, mod, exp):
-        self.mod = mod
-        self.exp = exp
+    def __init__(self, n, e):
+        self.n = n
+        self.e = e
 
 class private_key:
-    def __init__(self, mod, exp):
-        self.mod = mod
-        self.exp = exp
+    def __init__(self, n, d):
+        self.n = n
+        self.d = d
 
 def GCD(a, b):
     if b == 0:
@@ -16,23 +16,7 @@ def GCD(a, b):
     else:
         return GCD(b, a%b)
 
-def modInverse(a, b):
-    b0 = b
-    y = 0
-    x = 1
-    if b == 1:
-        return 0
-    while a > 1:
-        q = a // b
-        t = b
-        b = a % b
-        a = t
-        t = y
-        y = x - q * y
-        x = y
-    if x < 0:
-        x += b0
-    return x
+def invmod(a,b): return 0 if a==0 else 1 if b%a==0 else b - invmod(b%a,a)*b//a
 
 def modExp(a, e, m):
     a = a % m
@@ -51,16 +35,11 @@ def mulmod(a, b, m):
         b //= 2
     return x % m
 
-def isPrime(n) : 
-  
-    # Corner cases 
+def isPrime(n) :   
     if (n <= 1) : 
         return False
     if (n <= 3) : 
         return True
-  
-    # This is checked so that we can skip  
-    # middle five numbers in below loop 
     if (n % 2 == 0 or n % 3 == 0) : 
         return False
   
@@ -72,29 +51,27 @@ def isPrime(n) :
   
     return True
 
-p = 0
-q = 0
-e = 0
-n = 0
-phi = 0
-while True:
-    p = random.randint(2, 2**30)
-    q = random.randint(2, 2**30)
-    n = p * q
-    phi = (p - 1) * (q - 1)
-    e = random.randint(2, 2**30) % phi + 1
-    if p != q\
-        and\
-       GCD(phi, e) == 1\
-        and\
-       isPrime(p)\
-        and\
-       isPrime(q):
-       break
+def generate_keys():
+    p = 0
+    q = 0
+    n = 0
+    e = 0
+    phi = 0
+    while True:
+        p = random.randint(2**30, 2**40)
+        q = random.randint(2**30, 2**40)
+        n = p * q
+        phi = (p - 1) * (q - 1)
+        e = random.randint(2, 2**30) % phi 
+        if p != q and GCD(phi, e) == 1 and isPrime(p) and isPrime(q):
+            break
+    d = invmod(e, phi)
+    pub = public_key(n, e)
+    priv = private_key(n, d)
+    return pub, priv
 
-print(p)
-print(q)
-print(e)
-print(n)
-print(phi)  
-
+pub, priv = generate_keys()
+print(pub.n)
+print(priv.n)
+print(pub.e)
+print(priv.d)
