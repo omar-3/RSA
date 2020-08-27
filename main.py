@@ -18,26 +18,24 @@ def GCD(a, b):
 
 def inverseMod(x, y): return 0 if x==0 else 1 if y%x==0 else y - inverseMod(y%x ,x)*y//x
 
-def modExp(a, e, m):
-    a = a % m
-    if e == 0: return 1
-    if e == 1: return a
-    if e & 1: return a * modExp(a, e - 1, m) % m
-    else: return modExp(a * a, e >> 1, m) % m
+def modExp(x, n, m):
+    product = 1
+    binaryPow = binarize(n)
+    for bit in binaryPow:
+        product = x*(product**2) % m  if int(bit) else product**2 % m 
+    return product
+
+def binarize(n):    
+    binary = ''
+    while n > 0:
+        binary = binary + str(n&1)
+        n = n>>1
+    return binary[::-1] 
 
 def isPrime(n) :   
-    if (n <= 1) : 
-        return False
-    if (n <= 3) : 
-        return True
-    if (n % 2 == 0 or n % 3 == 0): 
-        return False
-    for i in range(4,int(math.sqrt(n))):
-        k = i
-        while(k * k <= n) : 
-            if (n % k == 0) : 
-                return False
-            k = k + i
+    for i in range(2,int(math.sqrt(n))):
+        if (n % i == 0) : 
+            return False    
     return True
 
 def generate_keys():
